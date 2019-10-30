@@ -29,12 +29,40 @@ export const findAngleBetweenThreePoints = (
 };
 
 export const driftCompensate = (
-	Dest: Coord,
-	Cur: Coord,
-	Prev: Coord
+	dest: Coord,
+	cur: Coord,
+	prev: Coord,
+	vx: number,
+	vy: number
 ): Coord => {
 	const target = {} as Coord;
-	target.x = Dest.x - (Cur.x - Prev.x);
-	target.y = Dest.y - (Cur.y - Prev.y);
+	const nextMove = {} as Coord;
+	const destDistance = Math.sqrt(
+		(cur.x - dest.x) ** 2 + (cur.y - dest.y) ** 2
+	);
+	const speedDistance = Math.sqrt(vx ** 2 + vy ** 2);
+	nextMove.x = cur.x - (speedDistance * (cur.x - dest.x)) / destDistance;
+	nextMove.y = cur.y - (speedDistance * (cur.y - dest.y)) / destDistance;
+
+	const driftX = nextMove.x - (cur.x + vx);
+	const driftY = nextMove.y - (cur.y + vy);
+
+	target.x = dest.x + driftX;
+	target.y = dest.y + driftY;
 	return target;
+};
+
+export const nearestPointOnCircle = (
+	circleCenter: Coord,
+	radius: number,
+	givenPoint: Coord
+): Coord => {
+	const nearestPoint = {} as Coord;
+	const vector = {} as Coord;
+	vector.x = givenPoint.x - circleCenter.x;
+	vector.y = givenPoint.y - circleCenter.y;
+	const magV = Math.sqrt(vector.x * vector.x + vector.y * vector.y);
+	nearestPoint.x = circleCenter.x + (vector.x / magV) * radius;
+	nearestPoint.y = circleCenter.y + (vector.y / magV) * radius;
+	return nearestPoint;
 };

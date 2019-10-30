@@ -2,6 +2,7 @@ import Pod from './Pod';
 
 import {
 	CHECK_POINT_SIZE_BUFFER,
+	CHECK_POINT_RADIUS,
 	MAX_SPEED,
 	MIN_THRUST,
 	BOOST,
@@ -13,6 +14,7 @@ import {
 	distanceBetweenTwoPoints,
 	findAngleBetweenThreePoints,
 	isWithin,
+	nearestPointOnCircle,
 } from '../util';
 
 export default class PlayerPod extends Pod {
@@ -24,6 +26,10 @@ export default class PlayerPod extends Pod {
 		this.intendedThrust = 0;
 	}
 
+	public get speed() {
+		return Math.abs(this.vx) + Math.abs(this.vy);
+	}
+
 	public setIntendedTarget(coord: Coord): void {
 		this.intendedTarget = coord;
 	}
@@ -33,12 +39,23 @@ export default class PlayerPod extends Pod {
 	}
 
 	public calculateIdealTarget(checkpointCoord: Coord): Coord {
-		const idealTarget = driftCompensate(
+		const nearestPoint = nearestPointOnCircle(
 			checkpointCoord,
-			this.loc,
-			this.lastLoc
+			CHECK_POINT_RADIUS,
+			this.loc
 		);
-		return idealTarget;
+		const idealTarget = driftCompensate(
+			nearestPoint,
+			this.loc,
+			this.lastLoc,
+			this.vx,
+			this.vy
+		);
+		const roundedTarget = {
+			x: Math.round(idealTarget.x),
+			y: Math.round(idealTarget.y),
+		};
+		return roundedTarget;
 	}
 
 	public calculateIdealThrust(
@@ -47,30 +64,30 @@ export default class PlayerPod extends Pod {
 	): number {
 		let thrust = 100;
 		let recMaxSpeed = MAX_SPEED;
+
 		const nextDist = distanceBetweenTwoPoints(checkpointCoord, this.loc);
+		const distanceToEdge = nextDist - CHECK_POINT_RADIUS;
+
 		const coordAngle = findAngleBetweenThreePoints(
 			{ x: 32000, y: this.loc.y },
 			this.loc,
-			checkpointCoord
+			this.intendedTarget
 		);
 		const adjustedAngle = this.angle > 180 ? 360 - this.angle : this.angle;
 		const nextAngle = Math.floor(adjustedAngle - coordAngle);
 
-		const distanceToEdge = nextDist - CHECK_POINT_SIZE_BUFFER;
-		const speed = Math.abs(this.vx) + Math.abs(this.vy); // distanceBetweenTwoPoints(this.lastLoc, this.loc);
-
 		// as distance gets lower, max speed should get lower
-		if (distanceToEdge < 2500) {
-			recMaxSpeed = (distanceToEdge / 2500) * MAX_SPEED;
+		if (distanceToEdge < 2100) {
+			recMaxSpeed = (distanceToEdge / 2100) * MAX_SPEED;
 		}
-		if (speed > recMaxSpeed) {
+		if (this.speed > recMaxSpeed) {
 			thrust =
 				MIN_THRUST +
 				Math.ceil((recMaxSpeed / MAX_SPEED) * (100 - MIN_THRUST));
 		}
 
 		if (!isWithin(nextAngle, 90)) {
-			thrust = 42;
+			thrust = MIN_THRUST;
 		} /* else if (nextAngle !== 0 && nextDist < 300) {
 			thrust = Math.ceil(25 + (75 - 90 / Math.abs(nextAngle)));
 		} else if (nextAngle !== 0) {
