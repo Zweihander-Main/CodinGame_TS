@@ -31,7 +31,6 @@ export const findAngleBetweenThreePoints = (
 export const driftCompensate = (
 	dest: Coord,
 	cur: Coord,
-	prev: Coord,
 	vx: number,
 	vy: number
 ): Coord => {
@@ -47,8 +46,8 @@ export const driftCompensate = (
 	const driftX = nextMove.x - (cur.x + vx);
 	const driftY = nextMove.y - (cur.y + vy);
 
-	target.x = dest.x + driftX;
-	target.y = dest.y + driftY;
+	target.x = dest.x + driftX * 2;
+	target.y = dest.y + driftY * 2;
 	return target;
 };
 

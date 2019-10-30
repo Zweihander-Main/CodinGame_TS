@@ -47,7 +47,6 @@ export default class PlayerPod extends Pod {
 		const idealTarget = driftCompensate(
 			nearestPoint,
 			this.loc,
-			this.lastLoc,
 			this.vx,
 			this.vy
 		);
