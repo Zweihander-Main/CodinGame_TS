@@ -1,33 +1,28 @@
 import Pod from './Pod';
 
-import {
-	CHECK_POINT_SIZE_BUFFER,
-	CHECK_POINT_RADIUS,
-	MAX_SPEED,
-	MIN_THRUST,
-	BOOST,
-	SHIELD,
-} from '../constants';
+import { MAX_SPEED, MIN_THRUST, BOOST, SHIELD } from '../constants';
 
-import {
-	driftCompensate,
-	distanceBetweenTwoPoints,
-	findAngleBetweenThreePoints,
-	isWithin,
-	nearestPointOnCircle,
-} from '../util';
+import { driftCompensate, absoluteAngleToDest, isWithin } from '../util';
 
 export default class PlayerPod extends Pod {
 	public intendedTarget: Coord;
 	public intendedThrust: number;
+	public angleToIntendedTarget: number;
+	public angleOffsetToIntendedTarget: number;
 	public constructor() {
 		super();
 		this.intendedTarget = { x: 0, y: 0 };
 		this.intendedThrust = 0;
 	}
 
-	public get speed() {
-		return Math.abs(this.vx) + Math.abs(this.vy);
+	public turnStart(nearestPointCheckPoint): void {
+		super.turnStart(nearestPointCheckPoint);
+		this.angleToIntendedTarget = absoluteAngleToDest(
+			this.loc,
+			this.intendedTarget
+		);
+		this.angleOffsetToIntendedTarget =
+			this.angle - this.angleToIntendedTarget;
 	}
 
 	public setIntendedTarget(coord: Coord): void {
@@ -38,14 +33,9 @@ export default class PlayerPod extends Pod {
 		this.intendedThrust = thrust;
 	}
 
-	public calculateIdealTarget(checkpointCoord: Coord): Coord {
-		const nearestPoint = nearestPointOnCircle(
-			checkpointCoord,
-			CHECK_POINT_RADIUS,
-			this.loc
-		);
+	public calculateIdealTarget(): Coord {
 		const idealTarget = driftCompensate(
-			nearestPoint,
+			this.nearestPointCheckPoint,
 			this.loc,
 			this.vx,
 			this.vy
@@ -64,28 +54,18 @@ export default class PlayerPod extends Pod {
 		let thrust = 100;
 		let recMaxSpeed = MAX_SPEED;
 
-		const nextDist = distanceBetweenTwoPoints(checkpointCoord, this.loc);
-		const distanceToEdge = nextDist - CHECK_POINT_RADIUS;
-
-		const coordAngle = findAngleBetweenThreePoints(
-			{ x: 32000, y: this.loc.y },
-			this.loc,
-			this.intendedTarget
-		);
-		const adjustedAngle = this.angle > 180 ? 360 - this.angle : this.angle;
-		const nextAngle = Math.floor(adjustedAngle - coordAngle);
-
 		// as distance gets lower, max speed should get lower
-		if (distanceToEdge < 2100) {
-			recMaxSpeed = (distanceToEdge / 2100) * MAX_SPEED;
+		if (this.distanceToEdgeCheckPoint < 2100) {
+			recMaxSpeed = (this.distanceToEdgeCheckPoint / 2100) * MAX_SPEED;
 		}
+		console.error(this.speed, recMaxSpeed);
 		if (this.speed > recMaxSpeed) {
 			thrust =
 				MIN_THRUST +
 				Math.ceil((recMaxSpeed / MAX_SPEED) * (100 - MIN_THRUST));
 		}
 
-		if (!isWithin(nextAngle, 90)) {
+		if (!isWithin(this.angleOffsetToIntendedTarget, 90)) {
 			thrust = MIN_THRUST;
 		} /* else if (nextAngle !== 0 && nextDist < 300) {
 			thrust = Math.ceil(25 + (75 - 90 / Math.abs(nextAngle)));
@@ -93,7 +73,11 @@ export default class PlayerPod extends Pod {
 			thrust = Math.ceil(50 + (50 - 90 / Math.abs(nextAngle)));
 		}*/
 
-		if (distanceToEdge > 5000 && boostLeft > 0 && isWithin(nextAngle, 2)) {
+		if (
+			this.distanceToEdgeCheckPoint > 5000 &&
+			boostLeft > 0 &&
+			isWithin(this.angleOffsetToIntendedTarget, 2)
+		) {
 			thrust = BOOST;
 			boostLeft--;
 		}

@@ -1,3 +1,6 @@
+import { CHECK_POINT_RADIUS } from '../constants';
+import { nearestPointOnCircle, distanceBetweenTwoPoints } from '../util';
+
 export default class Pod {
 	public loc: Coord;
 	public vx: number;
@@ -6,6 +9,11 @@ export default class Pod {
 	public nextCheckPointId: number;
 	public locHistory: Array<Coord>;
 	public checkpointHistory: Array<number>;
+	public nearestPointCheckPoint: Coord;
+	public distanceToCheckPoint: number;
+	public distanceToEdgeCheckPoint: number;
+	public angleToCheckPoint: number;
+	public angleOffsetToCheckPoint: number;
 	public constructor() {
 		this.loc = { x: 0, y: 0 };
 		this.vx = 0;
@@ -21,6 +29,24 @@ export default class Pod {
 			return this.locHistory[this.locHistory.length - 2];
 		}
 		return this.locHistory[0];
+	}
+
+	public get speed(): number {
+		return Math.abs(this.vx) + Math.abs(this.vy);
+	}
+
+	public turnStart(checkpointCoord: Coord): void {
+		this.nearestPointCheckPoint = nearestPointOnCircle(
+			checkpointCoord,
+			CHECK_POINT_RADIUS,
+			this.loc
+		);
+		this.distanceToCheckPoint = distanceBetweenTwoPoints(
+			checkpointCoord,
+			this.loc
+		);
+		this.distanceToEdgeCheckPoint =
+			this.distanceToCheckPoint - CHECK_POINT_RADIUS;
 	}
 
 	public update(

@@ -20,7 +20,7 @@ while (true) {
 			.map((a) => parseInt(a, 10));
 		game.updatePods(i, x, y, vx, vy, angle, nextCheckPointId);
 	}
-	game.calculate();
+	game.turnStart();
 	game.output();
 
 	/*Implement way to target perim - 100, not center?

@@ -62,12 +62,15 @@ export default class Game {
 		this.checkpoints.push({ x: checkpointX, y: checkpointY });
 	}
 
-	public calculate(): void {
+	public turnStart(): void {
+		this.enemyPods.forEach((pod) => {
+			const nextCheckPointCoord = this.checkpoints[pod.nextCheckPointId];
+			pod.turnStart(nextCheckPointCoord);
+		});
 		this.playerPods.forEach((pod) => {
 			const nextCheckPointCoord = this.checkpoints[pod.nextCheckPointId];
-			pod.setIntendedTarget(
-				pod.calculateIdealTarget(nextCheckPointCoord)
-			);
+			pod.turnStart(nextCheckPointCoord);
+			pod.setIntendedTarget(pod.calculateIdealTarget());
 			const thrust = pod.calculateIdealThrust(
 				nextCheckPointCoord,
 				this.boostLeft

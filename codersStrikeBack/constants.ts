@@ -1,5 +1,4 @@
 export const CHECK_POINT_RADIUS = 600;
-export const CHECK_POINT_SIZE_BUFFER = 400;
 export const MAX_SPEED = 800;
 export const MIN_THRUST = 10;
 export const BOOST = -1;
