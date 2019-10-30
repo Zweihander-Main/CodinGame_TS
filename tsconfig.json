@@ -1,8 +1,6 @@
 {
 	"compilerOptions": {
-		"sourceMap": true,
-		"noImplicitAny": false,
-		"module": "es6",
-		"target": "esnext"
-	}
+		"target": "ES5"
+	},
+	"include": ["codersStrikeBack/**/*.ts", "globals.d.ts"]
 }

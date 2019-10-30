@@ -9,9 +9,8 @@
 	"private": true,
 	"license": "MIT",
 	"scripts": {
-		"test": "jest",
-		"build": "webpack",
-		"watch": "webpack --watch"
+		"build": "gulp",
+		"watch": "gulp watch"
 	},
 	"jest": {
 		"transform": {
@@ -37,19 +36,34 @@
 			"es6": true
 		},
 		"parser": "@typescript-eslint/parser",
-		"plugins": ["@typescript-eslint"],
+		"parserOptions": {
+			"project": "tsconfig.json"
+		},
+		"plugins": [
+			"@typescript-eslint"
+		],
 		"extends": [
 			"eslint:recommended",
 			"plugin:@typescript-eslint/eslint-recommended",
 			"plugin:@typescript-eslint/recommended",
+			"plugin:@typescript-eslint/recommended-requiring-type-checking",
 			"prettier",
 			"prettier/@typescript-eslint"
 		],
 		"rules": {
-			"quotes": ["error", "single"],
-			"semi": ["error", "always"],
+			"quotes": [
+				"error",
+				"single"
+			],
+			"semi": [
+				"error",
+				"always"
+			],
 			"no-console": "off",
-			"no-mixed-spaces-and-tabs": ["error", "smart-tabs"]
+			"no-mixed-spaces-and-tabs": [
+				"error",
+				"smart-tabs"
+			]
 		},
 		"globals": {
 			"readline": true,
@@ -107,25 +121,33 @@
 		"not dead"
 	],
 	"devDependencies": {
-		"@babel/core": "^7.4.3",
-		"@babel/preset-env": "^7.4.3",
-		"@babel/register": "^7.4.0",
-		"@typescript-eslint/eslint-plugin": "^2.4.0",
-		"@typescript-eslint/parser": "^2.4.0",
-		"babel-jest": "^24.7.1",
+		"@babel/core": "^7.6.4",
+		"@babel/preset-env": "^7.6.3",
+		"@babel/register": "^7.6.2",
+		"@typescript-eslint/eslint-plugin": "^2.6.0",
+		"@typescript-eslint/parser": "^2.6.0",
+		"babel-jest": "^24.9.0",
 		"del": "^5.1.0",
-		"eslint": "^5.16.0",
-		"eslint-config-prettier": "^4.1.0",
-		"eslint-plugin-jest": "^22.4.1",
-		"eslint-plugin-prettier": "^3.0.1",
+		"eslint": "^6.6.0",
+		"eslint-config-prettier": "^6.5.0",
+		"eslint-plugin-jest": "^23.0.2",
+		"eslint-plugin-prettier": "^3.1.1",
+		"gulp": "^4.0.2",
 		"gulp-babel": "^8.0.0",
 		"gulp-debug": "^4.0.0",
-		"jest": "^24.7.1",
-		"jest-mock-console": "^0.4.2",
-		"prettier": "^1.17.0",
-		"ts-loader": "^6.2.0",
+		"jest": "^24.9.0",
+		"jest-mock-console": "^1.0.0",
+		"minipack_ts": "0.3.4",
+		"prettier": "^1.18.2",
+		"ts-loader": "^6.2.1",
 		"typescript": "^3.6.4",
-		"webpack": "^4.41.0",
+		"webpack": "^4.41.2",
 		"webpack-cli": "^3.3.9"
+	},
+	"dependencies": {
+		"@babel/parser": "^7.6.4",
+		"@babel/types": "^7.6.3",
+		"ts-bundle": "^0.3.0",
+		"typescript-bundle": "^1.0.16"
 	}
 }
