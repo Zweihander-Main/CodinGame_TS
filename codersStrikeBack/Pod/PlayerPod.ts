@@ -58,7 +58,6 @@ export default class PlayerPod extends Pod {
 		if (this.distanceToEdgeCheckPoint < 2100) {
 			recMaxSpeed = (this.distanceToEdgeCheckPoint / 2100) * MAX_SPEED;
 		}
-		console.error(this.speed, recMaxSpeed);
 		if (this.speed > recMaxSpeed) {
 			thrust =
 				MIN_THRUST +
