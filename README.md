@@ -8,7 +8,7 @@ Other languages:
 
 ### List of projects:
 
-[Coders Strike Back](./codersStrikeBack/) -- Bog programming competition. [Details here.](https://www.codingame.com/multiplayer/bot-programming/coders-strike-back) Hit Gold league. Lots more can be done to improve.
+[Coders Strike Back](./codersStrikeBack/) -- Bot programming competition. [Details here.](https://www.codingame.com/multiplayer/bot-programming/coders-strike-back) Hit Gold league. Lots more can be done to improve.
 
 [Puzzles](./puzzles) -- Divided by difficulty. Not necessarily optimal solutions for every one but they pass.
 
